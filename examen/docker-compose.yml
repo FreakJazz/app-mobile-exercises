@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3310:3306"        # para DBeaver (3306 y 3307 ocupados por otros)
+    volumes:
+      # Se ejecuta solo la primera vez que se crea el volumen
+      - ./servidor/estudiantes.sql:/docker-entrypoint-initdb.d/estudiantes.sql
+      - dbdata:/var/lib/mysql
+
+  web:
+    build: .
+    ports:
+      - "8091:80"          # http://localhost:8091/api_estudiantes/consultar.php
+    environment:
+      DB_HOST: db
+      DB_NAME: bd_examen
+      DB_USER: root
+      DB_PASS: ""
+    volumes:
+      - ./servidor:/var/www/html/api_estudiantes
+    depends_on:
+      - db
+
+  phpmyadmin:
+    image: phpmyadmin:5
+    ports:
+      - "8092:80"          # http://localhost:8092
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: ""
+    depends_on:
+      - db
+
+volumes:
+  dbdata:

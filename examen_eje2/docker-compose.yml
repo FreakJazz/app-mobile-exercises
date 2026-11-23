@@ -1,0 +1,27 @@
+services:
+  db:
+    image: mysql:8.0
+    entrypoint: ["bash", "/mysql-entrypoint.sh"]
+    ports:
+      - "3307:3306"        # DBeaver: localhost:3307, user root, sin password
+    volumes:
+      - ./docker/mysql-entrypoint.sh:/mysql-entrypoint.sh:ro
+      - ./servidor/contactos.sql:/docker-entrypoint-initdb.d/contactos.sql:ro
+      - dbdata:/var/lib/mysql
+
+  web:
+    build: .
+    ports:
+      - "8082:80"          # http://localhost:8082/api_contactos/consultar.php
+    environment:
+      DB_HOST: db
+      DB_NAME: bd_contactos
+      DB_USER: root
+      DB_PASS: ""
+    volumes:
+      - ./servidor:/var/www/html/api_contactos
+    depends_on:
+      - db
+
+volumes:
+  dbdata:

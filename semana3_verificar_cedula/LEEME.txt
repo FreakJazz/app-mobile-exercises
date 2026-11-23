@@ -1,0 +1,30 @@
+Verificar cédula - Android (Kotlin + Volley) + PHP (PDO) + MySQL
+Basado en 3.WebServices_JSON_Android.pdf
+
+BASE DE DATOS
+1. En phpMyAdmin ejecuta agregar_cedula.sql (agrega la columna cedula a
+   la tabla usuarios de bd_app y un dato de prueba).
+
+SERVIDOR (XAMPP: Apache + MySQL encendidos)
+2. Copia verificar_cedula.php a htdocs/mi_api/usuarios/
+   (usa el config/database.php que ya tienes del ejemplo del PDF).
+3. Prueba con curl o Postman (POST, form-data, campo cedula):
+   curl -d "cedula=1234567890" http://localhost/mi_api/usuarios/verificar_cedula.php
+   -> {"estado":"ok","registrada":true,"mensaje":"..."}
+
+ANDROID
+4. build.gradle (app) -> dependencies:
+       implementation "com.android.volley:volley:1.2.1"
+5. VerificarCedulaActivity.kt -> app/src/main/java/<tu package>/ (cambia package)
+6. activity_verificar_cedula.xml -> app/src/main/res/layout/
+7. AndroidManifest.xml:
+       <uses-permission android:name="android.permission.INTERNET" />
+       <application android:usesCleartextTraffic="true" ...>
+           <activity android:name=".VerificarCedulaActivity" android:exported="false" />
+8. Celular real: cambia 10.0.2.2 por la IP de tu PC (misma WiFi).
+9. Abrir desde otra pantalla:
+       startActivity(Intent(this, VerificarCedulaActivity::class.java))
+
+Guion del video: layout (3 vistas) -> validación 10 dígitos en Android
+-> petición POST con Volley -> PHP (validación + PDO prepared) -> consulta
+MySQL -> JSON estado/registrada -> demo: inválida, registrada, disponible.
